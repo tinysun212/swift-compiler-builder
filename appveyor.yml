@@ -1,0 +1,100 @@
+version: 1.0.{build}
+
+environment:
+  matrix:
+  - COMPILER: gcc
+    PLATFORM: mingw64
+
+install:
+  # Set Environment
+  - 'echo End intall at: & time /t'
+  - SET PATH_ORIGINAL=%PATH%
+  - SET "PATH_MINGW64=c:\msys64\mingw64\bin;c:\msys64\usr\bin"
+  - SET PATH=%PATH_MINGW64%;%PATH_ORIGINAL%
+  - SET MINGW64_DIR=c:/msys64/mingw64
+  - SET WORK_DIR=c:/projects/llvm-builder
+  - c:/msys64/usr/bin/mkdir -p %WORK_DIR%
+  - cd %WORK_DIR%
+  
+  # Install packages
+  - pacman -S --noconfirm mingw-w64-x86_64-cmake
+  - pacman -S --noconfirm mingw-w64-x86_64-ninja
+  - pacman -S --noconfirm mingw-w64-x86_64-clang       
+  - pacman -S --noconfirm mingw-w64-x86_64-icu         
+  - pacman -S --noconfirm mingw-w64-x86_64-libxml2     
+  - pacman -S --noconfirm mingw-w64-x86_64-wineditline 
+  - pacman -S --noconfirm mingw-w64-x86_64-winpthreads 
+  - pacman -S --noconfirm mingw-w64-x86_64-pkg-config  
+  - pacman -S --noconfirm mingw-w64-x86_64-dlfcn       
+  #- pacman -S --noconfirm make                         
+  - pacman -S --noconfirm python                       
+  - pacman -S --noconfirm python2                      
+  
+  # Patch GCC header
+  # __float128 is undefined in clang (https://github.com/Alexpux/MINGW-packages/pull/1833)
+  - sed -i "s;defined(_GLIBCXX_USE_FLOAT128)$;defined(_GLIBCXX_USE_FLOAT128) \&\& !defined\(__clang__\);" %MINGW64_DIR%/include/c++/*/type_traits
+  - sed -i "s;defined(_GLIBCXX_USE_FLOAT128)$;defined(_GLIBCXX_USE_FLOAT128) \&\& !defined\(__clang__\);" %MINGW64_DIR%/include/c++/*/bits/std_abs.h
+  
+  # Download source
+  - git clone https://github.com/apple/swift-cmark.git %WORK_DIR%/cmark
+  - cd %WORK_DIR%/cmark & git checkout -qf master & cd ..
+  - git clone https://github.com/tinysun212/swift-windows.git %WORK_DIR%/swift
+  - cd %WORK_DIR%/swift & git checkout -qf swift-4.0.3+mingw.20180102 & cd ..
+    
+build_script:
+  # Build cmark
+  - c:/msys64/usr/bin/mkdir -p %WORK_DIR%/build/NinjaMinGW/cmark
+  - cd %WORK_DIR%/build/NinjaMinGW/cmark
+  - cmake -G Ninja -D CMAKE_BUILD_TYPE=RELEASE -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ %WORK_DIR%/cmark
+  - ninja
+  - cd src
+  - cp -p libcmark.dll.a libcmark.a
+  - cp -p libcmark.a %WORK_DIR%/swift/libcmark.a
+
+  # llvm source (need for cmake/modules/LLVM-Config.cmake at least)
+  - cd %WORK_DIR%
+  - wget -q -O llvm_src.tar.gz https://github.com/tinysun212/swift-llvm-cygwin/archive/swift-4.0.3+mingw.20180102.tar.gz
+  - tar zxf llvm_src.tar.gz
+  - mv swift-llvm-cygwin-swift-4.0.3-mingw.20180102 llvm
+
+  # clang source (error at cmake/modules/SwiftSharedCMakeConfig.cmake:146)
+  - wget -q -O clang_src.tar.gz https://github.com/tinysun212/swift-clang-cygwin/archive/swift-4.0.3+mingw.20180102.tar.gz
+  - tar zxf clang_src.tar.gz swift-clang-cygwin-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/i386-unknown-linux-gnu-ld.gold
+  - tar zxf clang_src.tar.gz swift-clang-cygwin-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld.gold
+  - tar zxf clang_src.tar.gz swift-clang-cygwin-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/i386-unknown-linux-gnu/bin/ld.gold
+  - tar zxf clang_src.tar.gz swift-clang-cygwin-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/x86_64-unknown-linux-gnu/bin/ld.gold
+  - tar zxf clang_src.tar.gz swift-clang-cygwin-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-as
+  - tar zxf clang_src.tar.gz swift-clang-cygwin-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-ld
+  - tar zxf clang_src.tar.gz swift-clang-cygwin-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-as
+  - tar zxf clang_src.tar.gz swift-clang-cygwin-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld
+  - tar zxf clang_src.tar.gz
+  - mv swift-clang-cygwin-swift-4.0.3-mingw.20180102 clang
+  # link clang into llvm
+  - cd %WORK_DIR%/llvm/tools
+  - mklink /d clang ..\..\clang
+
+  # Load llvm/clang lib
+  - c:/msys64/usr/bin/mkdir -p %WORK_DIR%/build/NinjaMinGW/llvm
+  - cd %WORK_DIR%/build/NinjaMinGW/llvm
+  - wget -q -O llvm_lib.tar.gz https://ci.appveyor.com/api/projects/tinysun212/llvm-builder/artifacts/llvm_lib.tar.gz
+  - tar zxf llvm_lib.tar.gz
+  
+  # Build swift
+  - c:/msys64/usr/bin/mkdir -p %WORK_DIR%/build/NinjaMinGW/swift
+  - cd %WORK_DIR%/build/NinjaMinGW/swift
+  # cmark patch
+  - mkdir bin & cp -p %WORK_DIR%/build/NinjaMinGW/cmark/src/libcmark.dll bin
+  - cmake -G "Ninja" ../../../swift -DCMAKE_BUILD_TYPE=Release -DCMAKE_ASM_COMPILER=%WORK_DIR%/build/NinjaMinGW/llvm/bin/clang.exe -DCMAKE_C_COMPILER=%WORK_DIR%/build/NinjaMinGW/llvm/bin/clang.exe  -DCMAKE_CXX_COMPILER=%WORK_DIR%/build/NinjaMinGW/llvm/bin/clang++.exe -DPKG_CONFIG_EXECUTABLE=%MINGW64_DIR%/bin/pkg-config -DICU_UC_INCLUDE_DIR=%MINGW64_DIR%include -DICU_UC_LIBRARY=%MINGW64_DIR%/lib/libicuuc.dll.a -DICU_I18N_INCLUDE_DIR=%MINGW64_DIR%/include -DICU_I18N_LIBRARY=%MINGW64_DIR%/lib/libicuin.dll.a -DSWIFT_INCLUDE_DOCS=FALSE -DSWIFT_PATH_TO_CMARK_BUILD=%WORK_DIR%/build/NinjaMinGW/cmark -DSWIFT_PATH_TO_CMARK_SOURCE=%WORK_DIR%/cmark -DSWIFT_PATH_TO_LLVM_SOURCE=%WORK_DIR%/llvm -DSWIFT_PATH_TO_LLVM_BUILD=%WORK_DIR%/build/NinjaMinGW/llvm -DSWIFT_STDLIB_ASSERTIONS:BOOL=TRUE %WORK_DIR%/swift
+  - ninja
+  
+after_build:
+  - cd %WORK_DIR%/build/NinjaMinGW
+  - 7z a swift.zip swift/bin/swift.exe swift/bin/*.dll swift/lib/swift
+  - mv swift.zip %APPVEYOR_BUILD_FOLDER%
+
+test_script:
+  - 'echo skip test'
+  
+artifacts:
+  - path: swift.zip
+    name: SWIFT
