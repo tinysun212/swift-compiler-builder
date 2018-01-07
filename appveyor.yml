@@ -36,8 +36,32 @@ install:
   - sed -i "s;defined(_GLIBCXX_USE_FLOAT128)$;defined(_GLIBCXX_USE_FLOAT128) \&\& !defined\(__clang__\);" %MINGW64_DIR%/include/c++/*/bits/std_abs.h
   
   # Download source
+  # llvm source
+  - wget -q -O llvm_src.tar.gz https://github.com/tinysun212/swift-llvm/archive/swift-4.0.3+mingw.20180102.tar.gz
+  - tar zxf llvm_src.tar.gz
+  - mv swift-llvm-swift-4.0.3-mingw.20180102 llvm
+  # clang source
+  - wget -q -O clang_src.tar.gz https://github.com/tinysun212/swift-clang/archive/swift-4.0.3+mingw.20180102.tar.gz
+  # Pre-extract the targets of the symbolic links
+  # The Windows native symbolic link system cann't create a symbolic link to non-exist target.
+  - tar zxf clang_src.tar.gz 
+      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/i386-unknown-linux-gnu-ld.gold
+      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld.gold
+      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/i386-unknown-linux-gnu/bin/ld.gold
+      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/x86_64-unknown-linux-gnu/bin/ld.gold
+      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-as
+      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-ld
+      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-as
+      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld
+  - tar zxf clang_src.tar.gz
+  - mv swift-clang-swift-4.0.3-mingw.20180102 clang
+  # link clang into llvm
+  - cd %WORK_DIR%/llvm/tools
+  - mklink /d clang ..\..\clang
+  # cmark source
   - git clone https://github.com/apple/swift-cmark.git %WORK_DIR%/cmark
   - cd %WORK_DIR%/cmark & git checkout -qf master & cd ..
+  # swift source
   - git clone https://github.com/tinysun212/swift-windows.git %WORK_DIR%/swift
   - cd %WORK_DIR%/swift & git checkout -qf swift-4.0.3+mingw.20180102 & cd ..
     
@@ -52,32 +76,13 @@ build_script:
   - cp -p libcmark.a %WORK_DIR%/swift/libcmark.a
 
   # llvm source (need for cmake/modules/LLVM-Config.cmake at least)
-  - cd %WORK_DIR%
-  - wget -q -O llvm_src.tar.gz https://github.com/tinysun212/swift-llvm-cygwin/archive/swift-4.0.3+mingw.20180102.tar.gz
-  - tar zxf llvm_src.tar.gz
-  - mv swift-llvm-cygwin-swift-4.0.3-mingw.20180102 llvm
-
   # clang source (error at cmake/modules/SwiftSharedCMakeConfig.cmake:146)
-  - wget -q -O clang_src.tar.gz https://github.com/tinysun212/swift-clang-cygwin/archive/swift-4.0.3+mingw.20180102.tar.gz
-  - tar zxf clang_src.tar.gz swift-clang-cygwin-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/i386-unknown-linux-gnu-ld.gold
-  - tar zxf clang_src.tar.gz swift-clang-cygwin-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld.gold
-  - tar zxf clang_src.tar.gz swift-clang-cygwin-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/i386-unknown-linux-gnu/bin/ld.gold
-  - tar zxf clang_src.tar.gz swift-clang-cygwin-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/x86_64-unknown-linux-gnu/bin/ld.gold
-  - tar zxf clang_src.tar.gz swift-clang-cygwin-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-as
-  - tar zxf clang_src.tar.gz swift-clang-cygwin-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-ld
-  - tar zxf clang_src.tar.gz swift-clang-cygwin-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-as
-  - tar zxf clang_src.tar.gz swift-clang-cygwin-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld
-  - tar zxf clang_src.tar.gz
-  - mv swift-clang-cygwin-swift-4.0.3-mingw.20180102 clang
-  # link clang into llvm
-  - cd %WORK_DIR%/llvm/tools
-  - mklink /d clang ..\..\clang
 
   # Load llvm/clang lib
   - c:/msys64/usr/bin/mkdir -p %WORK_DIR%/build/NinjaMinGW/llvm
   - cd %WORK_DIR%/build/NinjaMinGW/llvm
-  - wget -q -O llvm_lib.tar.gz https://ci.appveyor.com/api/projects/tinysun212/llvm-builder/artifacts/llvm_lib.tar.gz
-  - tar zxf llvm_lib.tar.gz
+  - wget -q https://ci.appveyor.com/api/projects/tinysun212/llvm-builder/artifacts/swift_llvm_lib.tar.gz
+  - tar zxf swift_llvm_lib.tar.gz
   
   # Build swift
   - c:/msys64/usr/bin/mkdir -p %WORK_DIR%/build/NinjaMinGW/swift
