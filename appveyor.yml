@@ -26,7 +26,9 @@ install:
   - pacman -S --noconfirm mingw-w64-x86_64-wineditline 
   - pacman -S --noconfirm mingw-w64-x86_64-winpthreads 
   - pacman -S --noconfirm mingw-w64-x86_64-pkg-config  
-  - pacman -S --noconfirm mingw-w64-x86_64-dlfcn       
+  #- pacman -S --noconfirm mingw-w64-x86_64-dlfcn
+  - wget -q http://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-dlfcn-1.0.0-2-any.pkg.tar.xz
+  - pacman -U --noconfirm mingw-w64-x86_64-dlfcn-1.0.0-2-any.pkg.tar.xz         
   - pacman -S --noconfirm python                       
   - pacman -S --noconfirm python2                      
   
