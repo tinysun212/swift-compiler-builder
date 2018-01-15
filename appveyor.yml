@@ -96,7 +96,8 @@ build_script:
   
 after_build:
   - cd %WORK_DIR%/build/NinjaMinGW
-  - 7z a swift.zip swift/bin/swift.exe swift/bin/*.dll swift/lib/swift
+  - mv swift usr
+  - 7z a swift.zip usr/bin/swift.exe usr/bin/*.dll usr/lib/swift
   - mv swift.zip %APPVEYOR_BUILD_FOLDER%
 
 test_script:
