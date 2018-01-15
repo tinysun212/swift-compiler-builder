@@ -65,7 +65,7 @@ install:
   - cd %WORK_DIR%/cmark & git checkout -qf master & cd ..
   # swift source
   - git clone https://github.com/tinysun212/swift-windows.git %WORK_DIR%/swift
-  - cd %WORK_DIR%/swift & git checkout -qf swift-4.0.3+mingw.20180102 & cd ..
+  - cd %WORK_DIR%/swift & git checkout -qf swift-windows-4.0-branch & cd ..
     
 build_script:
   # Build cmark
