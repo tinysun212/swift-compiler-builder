@@ -1,0 +1,111 @@
+version: 1.0.{build}
+
+environment:
+  matrix:
+  - COMPILER: gcc
+    PLATFORM: cygwin64
+
+install:
+  # Set Environment
+  - SET PATH_ORIGINAL=%PATH%
+  - SET "PATH_CYGWIN64=c:\cygwin64\bin"
+  - SET PATH=%PATH_CYGWIN64%;%PATH_ORIGINAL%
+  - SET WORK_DIR=c:/projects
+  - SET CYGWIN64_DIR=/cygdrive/c/cygwin64
+  - cd %WORK_DIR%
+  
+  # Install packages
+  - C:\cygwin64\setup-x86_64.exe -qnNdO -R C:/cygwin64 -s http://cygwin.mirror.constant.com -l C:/cygwin64/var/cache/setup
+    -P cmake
+    -P ninja
+    -P clang
+    -P pkg-config
+    -P python
+    -P wget
+    -P libiconv-devel
+    -P icu
+    -P libxml2
+    -P edit
+    -P python
+  
+  # Download source
+  - cd %WORK_DIR%
+  # llvm source (need for cmake/modules/LLVM-Config.cmake at least)
+  - wget -q -O llvm_src.tar.gz https://github.com/tinysun212/swift-llvm/archive/swift-4.0.3+mingw.20180102.tar.gz
+  - tar zxf llvm_src.tar.gz
+  - mv swift-llvm-swift-4.0.3-mingw.20180102 llvm
+  # clang source (error at cmake/modules/SwiftSharedCMakeConfig.cmake:146)
+  - wget -q -O clang_src.tar.gz https://github.com/tinysun212/swift-clang/archive/swift-4.0.3+mingw.20180102.tar.gz
+  # Pre-extract the targets of the symbolic links
+  # The Windows native symbolic link system cann't create a symbolic link to non-exist target.
+  - tar zxf clang_src.tar.gz 
+      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/i386-unknown-linux-gnu-ld.gold
+      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld.gold
+      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/i386-unknown-linux-gnu/bin/ld.gold
+      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/x86_64-unknown-linux-gnu/bin/ld.gold
+      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-as
+      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-ld
+      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-as
+      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld
+  - tar zxf clang_src.tar.gz
+  - mv swift-clang-swift-4.0.3-mingw.20180102 clang
+  # link clang into llvm
+  - cd %WORK_DIR%/llvm/tools
+  - MKLINK /d clang ..\..\clang
+  # cmark source
+  - git clone https://github.com/apple/swift-cmark.git %WORK_DIR%/cmark
+  - cd %WORK_DIR%/cmark & git checkout -qf master & cd ..
+  # swift source
+  - git clone https://github.com/tinysun212/swift-windows.git %WORK_DIR%/swift
+  - cd %WORK_DIR%/swift & git checkout -qf swift-windows-4.0-branch & cd ..
+    
+build_script:
+  # Build cmark
+  - c:/cygwin64/bin/mkdir -p %WORK_DIR%/build/Ninja-ReleaseAssert/cmark
+  - cd %WORK_DIR%/build/Ninja-ReleaseAssert/cmark
+  - cmake -G Ninja -D CMAKE_BUILD_TYPE=RELEASE -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ %WORK_DIR%/cmark
+  - ninja
+  - cd src
+  - cp -p libcmark.dll.a libcmark.a
+  - cp -p libcmark.a %WORK_DIR%/swift/libcmark.a
+
+  # Load llvm/clang lib
+  - c:/cygwin64/bin/mkdir -p %WORK_DIR%/build/Ninja-ReleaseAssert/llvm
+  - cd %WORK_DIR%/build/Ninja-ReleaseAssert/llvm
+  - wget -q https://ci.appveyor.com/api/projects/tinysun212/llvm-builder-cygwin/artifacts/swift_llvm_bin.tar.gz
+  - tar zxf swift_llvm_bin.tar.gz
+  
+  # Build swift
+  - c:/msys64/usr/bin/mkdir -p %WORK_DIR%/build/Ninja-ReleaseAssert/swift
+  - cd %WORK_DIR%/build/Ninja-ReleaseAssert/swift
+  # cmark patch
+  - mkdir bin & cp -p %WORK_DIR%/build/Ninja-ReleaseAssert/cmark/src/libcmark.dll bin
+  - cmake -G "Ninja" ../../../swift -DCMAKE_BUILD_TYPE=Release 
+    -DCMAKE_ASM_COMPILER=%WORK_DIR%/build/Ninja-ReleaseAssert/llvm/bin/clang.exe
+    -DCMAKE_C_COMPILER=%WORK_DIR%/build/Ninja-ReleaseAssert/llvm/bin/clang.exe
+    -DCMAKE_CXX_COMPILER=%WORK_DIR%/build/Ninja-ReleaseAssert/llvm/bin/clang++.exe
+    -DPKG_CONFIG_EXECUTABLE=%CYGWIN64_DIR%/bin/pkg-config
+    -DICU_UC_INCLUDE_DIR=%CYGWIN64_DIR%/include -DICU_UC_LIBRARY=%CYGWIN64_DIR%/lib/libicuuc.dll.a 
+    -DICU_I18N_INCLUDE_DIR=%CYGWIN64_DIR%/include -DICU_I18N_LIBRARY=%CYGWIN64_DIR%/lib/libicuin.dll.a
+    -DSWIFT_INCLUDE_DOCS=FALSE -DSWIFT_PATH_TO_CMARK_BUILD=%WORK_DIR%/build/Ninja-ReleaseAssert/cmark
+    -DSWIFT_PATH_TO_CMARK_SOURCE=%WORK_DIR%/cmark -DSWIFT_PATH_TO_LLVM_SOURCE=%WORK_DIR%/llvm
+    -DSWIFT_PATH_TO_LLVM_BUILD=%WORK_DIR%/build/Ninja-ReleaseAssert/llvm -DSWIFT_STDLIB_ASSERTIONS:BOOL=TRUE
+    %WORK_DIR%/swift
+  - ninja
+  
+after_build:
+  # Convert absolute path to relative path in newlib.modulemap
+  - cd %WORK_DIR%/build/Ninja-ReleaseAssert/swift/lib/swift/cygwin/x86_64
+  - sed -i -e 's;/cygdrive/c/cygwin64;../../../../..;' newlib.modulemap
+  # Archiving to swift.zip
+  - cd %WORK_DIR%/build/Ninja-ReleaseAssert
+  - mv swift usr
+  - 7z a swift.zip usr/bin/swift.exe usr/bin/*.dll usr/lib/swift
+  - mv swift.zip %APPVEYOR_BUILD_FOLDER%
+
+test_script:
+  - 'echo skip test'
+  
+artifacts:
+  - path: swift.zip
+    name: SWIFT
