@@ -82,7 +82,7 @@ build_script:
   - cd %WORK_DIR%/build/Ninja-ReleaseAssert/swift
   # cmark patch
   - MKDIR bin
-  #- cp -p %WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/cmark-cygwin-x86_64/src/libcmark.dll bin
+  - cp -p %WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/cmark/src/cygcmark-0.22.0.dll bin
   - cmake -G "Ninja" ../../../swift -DCMAKE_BUILD_TYPE=Release 
     -DCMAKE_ASM_COMPILER=%WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/llvm/bin/clang.exe
     -DCMAKE_C_COMPILER=%WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/llvm/bin/clang.exe
@@ -91,7 +91,7 @@ build_script:
     -DICU_UC_INCLUDE_DIR=%CYGWIN64_DIR%/include -DICU_UC_LIBRARY=%CYGWIN64_DIR%/lib/libicuuc.dll.a 
     -DICU_I18N_INCLUDE_DIR=%CYGWIN64_DIR%/include -DICU_I18N_LIBRARY=%CYGWIN64_DIR%/lib/libicuin.dll.a
     -DSWIFT_INCLUDE_DOCS=FALSE
-    -DSWIFT_PATH_TO_CMARK_BUILD=%WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/cmark-cygwin-x86_64
+    -DSWIFT_PATH_TO_CMARK_BUILD=%WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/cmark
     -DSWIFT_PATH_TO_CMARK_SOURCE=%WORK_DIR_IN_CYGWIN%/cmark
     -DSWIFT_PATH_TO_LLVM_SOURCE=%WORK_DIR_IN_CYGWIN%/llvm
     -DSWIFT_PATH_TO_LLVM_BUILD=%WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/llvm
