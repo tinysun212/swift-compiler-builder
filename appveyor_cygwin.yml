@@ -73,7 +73,8 @@ build_script:
   # Load llvm/clang lib
   - c:/cygwin64/bin/mkdir -p %WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/llvm
   - cd %WORK_DIR%/build/Ninja-ReleaseAssert/llvm
-  - wget -q https://ci.appveyor.com/api/projects/tinysun212/llvm-builder-cygwin/artifacts/swift_llvm_bin.tar.gz
+  #  Get llvm-builder-cygwin artifact
+  - wget -q https://ci.appveyor.com/api/projects/tinysun212/llvm-builder-tugj7/artifacts/swift_llvm_bin.tar.gz
   - tar zxf swift_llvm_bin.tar.gz
   
   # Build swift
