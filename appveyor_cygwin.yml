@@ -11,6 +11,7 @@ install:
   - SET "PATH_CYGWIN64=c:\cygwin64\bin"
   - SET PATH=%PATH_CYGWIN64%;%PATH_ORIGINAL%
   - SET WORK_DIR=c:/projects
+  - SET WORK_DIR_IN_CYGWIN=/cygdrive/c/projects
   - SET CYGWIN64_DIR=/cygdrive/c/cygwin64
   - cd %WORK_DIR%
   
@@ -53,44 +54,44 @@ install:
   - cd %WORK_DIR%/llvm/tools
   - MKLINK /d clang ..\..\clang
   # cmark source
-  - git clone https://github.com/apple/swift-cmark.git %WORK_DIR%/cmark
+  - git clone https://github.com/apple/swift-cmark.git %WORK_DIR_IN_CYGWIN%/cmark
   - cd %WORK_DIR%/cmark & git checkout -qf master & cd ..
   # swift source
-  - git clone https://github.com/tinysun212/swift-windows.git %WORK_DIR%/swift
+  - git clone https://github.com/tinysun212/swift-windows.git %WORK_DIR_IN_CYGWIN%/swift
   - cd %WORK_DIR%/swift & git checkout -qf swift-windows-4.0-branch & cd ..
     
 build_script:
   # Build cmark
-  - c:/cygwin64/bin/mkdir -p %WORK_DIR%/build/Ninja-ReleaseAssert/cmark
+  - c:/cygwin64/bin/mkdir -p %WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/cmark
   - cd %WORK_DIR%/build/Ninja-ReleaseAssert/cmark
-  - cmake -G Ninja -D CMAKE_BUILD_TYPE=RELEASE -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ %WORK_DIR%/cmark
+  - cmake -G Ninja -D CMAKE_BUILD_TYPE=RELEASE -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ %WORK_DIR_IN_CYGWIN%/cmark
   - ninja
   - cd src
   - cp -p libcmark.dll.a libcmark.a
-  - cp -p libcmark.a %WORK_DIR%/swift/libcmark.a
+  - cp -p libcmark.a %WORK_DIR_IN_CYGWIN%/swift/libcmark.a
 
   # Load llvm/clang lib
-  - c:/cygwin64/bin/mkdir -p %WORK_DIR%/build/Ninja-ReleaseAssert/llvm
+  - c:/cygwin64/bin/mkdir -p %WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/llvm
   - cd %WORK_DIR%/build/Ninja-ReleaseAssert/llvm
   - wget -q https://ci.appveyor.com/api/projects/tinysun212/llvm-builder-cygwin/artifacts/swift_llvm_bin.tar.gz
   - tar zxf swift_llvm_bin.tar.gz
   
   # Build swift
-  - c:/msys64/usr/bin/mkdir -p %WORK_DIR%/build/Ninja-ReleaseAssert/swift
+  - c:/cygwin64/bin/mkdir -p %WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/swift
   - cd %WORK_DIR%/build/Ninja-ReleaseAssert/swift
   # cmark patch
-  - mkdir bin & cp -p %WORK_DIR%/build/Ninja-ReleaseAssert/cmark/src/libcmark.dll bin
+  - MKDIR bin & cp -p %WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/cmark/src/libcmark.dll bin
   - cmake -G "Ninja" ../../../swift -DCMAKE_BUILD_TYPE=Release 
-    -DCMAKE_ASM_COMPILER=%WORK_DIR%/build/Ninja-ReleaseAssert/llvm/bin/clang.exe
-    -DCMAKE_C_COMPILER=%WORK_DIR%/build/Ninja-ReleaseAssert/llvm/bin/clang.exe
-    -DCMAKE_CXX_COMPILER=%WORK_DIR%/build/Ninja-ReleaseAssert/llvm/bin/clang++.exe
+    -DCMAKE_ASM_COMPILER=%WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/llvm/bin/clang.exe
+    -DCMAKE_C_COMPILER=%WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/llvm/bin/clang.exe
+    -DCMAKE_CXX_COMPILER=%WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/llvm/bin/clang++.exe
     -DPKG_CONFIG_EXECUTABLE=%CYGWIN64_DIR%/bin/pkg-config
     -DICU_UC_INCLUDE_DIR=%CYGWIN64_DIR%/include -DICU_UC_LIBRARY=%CYGWIN64_DIR%/lib/libicuuc.dll.a 
     -DICU_I18N_INCLUDE_DIR=%CYGWIN64_DIR%/include -DICU_I18N_LIBRARY=%CYGWIN64_DIR%/lib/libicuin.dll.a
-    -DSWIFT_INCLUDE_DOCS=FALSE -DSWIFT_PATH_TO_CMARK_BUILD=%WORK_DIR%/build/Ninja-ReleaseAssert/cmark
-    -DSWIFT_PATH_TO_CMARK_SOURCE=%WORK_DIR%/cmark -DSWIFT_PATH_TO_LLVM_SOURCE=%WORK_DIR%/llvm
-    -DSWIFT_PATH_TO_LLVM_BUILD=%WORK_DIR%/build/Ninja-ReleaseAssert/llvm -DSWIFT_STDLIB_ASSERTIONS:BOOL=TRUE
-    %WORK_DIR%/swift
+    -DSWIFT_INCLUDE_DOCS=FALSE -DSWIFT_PATH_TO_CMARK_BUILD=%WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/cmark
+    -DSWIFT_PATH_TO_CMARK_SOURCE=%WORK_DIR_IN_CYGWIN%/cmark -DSWIFT_PATH_TO_LLVM_SOURCE=%WORK_DIR_IN_CYGWIN%/llvm
+    -DSWIFT_PATH_TO_LLVM_BUILD=%WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/llvm -DSWIFT_STDLIB_ASSERTIONS:BOOL=TRUE
+    %WORK_DIR_IN_CYGWIN%/swift
   - ninja
   
 after_build:
