@@ -30,7 +30,9 @@ install:
     -P python
     -P gcc
     -P g++
-    -P libstdc++6
+  # workaround for llvm-tblgen.exe error "Unknown pseudo relocation protocol version 256."
+  - wget -q http://cygwin.mirror.constant.com/x86_64/release/binutils/binutils-2.25-4.tar.xz
+  - tar -x -C / -f binutils-2.25-4.tar.xz
       
   # Download source
   - cd %WORK_DIR%
