@@ -28,7 +28,9 @@ install:
     -P libxml2
     -P edit
     -P python
-  
+    -P gcc
+    -P g++
+      
   # Download source
   - cd %WORK_DIR%
   # llvm source (need for cmake/modules/LLVM-Config.cmake at least)
