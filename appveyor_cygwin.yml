@@ -30,6 +30,7 @@ install:
     -P python
     -P gcc
     -P g++
+    -P libstdc++6
       
   # Download source
   - cd %WORK_DIR%
