@@ -13,7 +13,7 @@ install:
   - SET WORK_DIR=c:\projects
   - SET WORK_DIR_IN_CYGWIN=/cygdrive/c/projects
   - SET CYGWIN64_DIR=/cygdrive/c/cygwin64
-  - cd %WORK_DIR%
+  - CD %WORK_DIR%
   
   # Install packages
   - C:\cygwin64\setup-x86_64.exe -qnNdO -R C:/cygwin64 -s http://cygwin.mirror.constant.com -l C:/cygwin64/var/cache/setup
@@ -35,7 +35,7 @@ install:
   - tar -x -C / -f binutils-2.25-4.tar.xz
       
   # Download source
-  - cd %WORK_DIR%
+  - CD %WORK_DIR%
   # llvm source (need for cmake/modules/LLVM-Config.cmake at least)
   - wget -q -O llvm_src.tar.gz https://github.com/tinysun212/swift-llvm/archive/swift-4.0.3+mingw.20180102.tar.gz
   - tar zxf llvm_src.tar.gz
@@ -56,14 +56,14 @@ install:
   - tar zxf clang_src.tar.gz
   - mv swift-clang-swift-4.0.3-mingw.20180102 clang
   # link clang into llvm
-  - cd %WORK_DIR%/llvm/tools
+  - CD %WORK_DIR%/llvm/tools
   - MKLINK /d clang ..\..\clang
   # cmark source
   - git clone https://github.com/apple/swift-cmark.git %WORK_DIR_IN_CYGWIN%/cmark
-  - cd %WORK_DIR%/cmark & git checkout -qf master & cd ..
+  - CD %WORK_DIR%/cmark & git checkout -qf master & CD ..
   # swift source
   - git clone https://github.com/tinysun212/swift-windows.git %WORK_DIR_IN_CYGWIN%/swift
-  - cd %WORK_DIR%/swift & git checkout -qf swift-windows-4.0-branch & cd ..
+  - CD %WORK_DIR%/swift & git checkout -qf swift-windows-4.0-branch & CD ..
     
 build_script:
   # Build cmark
@@ -71,7 +71,7 @@ build_script:
   - CD %WORK_DIR%/build/Ninja-ReleaseAssert/cmark-cygwin-x86_64
   - cmake -G Ninja -D CMAKE_BUILD_TYPE=RELEASE -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ %WORK_DIR_IN_CYGWIN%/cmark
   - ninja
-  - cd src
+  - CD src
   - cp -p libcmark.dll.a libcmark.a
   - cp -p libcmark.a %WORK_DIR_IN_CYGWIN%/swift/libcmark.a
 
@@ -90,7 +90,7 @@ build_script:
   - MKLINK /D i686-pc-cygwin x86_64-pc-cygwin
   
   # Build swift
-  - MKDIR %WORK_DIR_IN_CYGWIN%\build\Ninja-ReleaseAssert\swift-cygwin-x86_64
+  - MKDIR %WORK_DIR%\build\Ninja-ReleaseAssert\swift-cygwin-x86_64
   - CD %WORK_DIR%/build/Ninja-ReleaseAssert/swift-cygwin-x86_64
   # cmark patch
   - MKDIR bin
@@ -113,10 +113,10 @@ build_script:
   
 after_build:
   # Convert absolute path to relative path in newlib.modulemap
-  - cd %WORK_DIR%/build/Ninja-ReleaseAssert/swift-cygwin-x86_64/lib/swift/cygwin/x86_64
+  - CD %WORK_DIR%/build/Ninja-ReleaseAssert/swift-cygwin-x86_64/lib/swift/cygwin/x86_64
   - sed -i -e 's;/cygdrive/c/cygwin64;../../../../..;' newlib.modulemap
   # Archiving to swift.zip
-  - cd %WORK_DIR%/build/Ninja-ReleaseAssert
+  - CD %WORK_DIR%/build/Ninja-ReleaseAssert
   - mv swift-cygwin-x86_64 usr
   - 7z a swift.zip usr/bin/swift.exe usr/bin/*.dll usr/lib/swift
   - mv swift.zip %APPVEYOR_BUILD_FOLDER%
