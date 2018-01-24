@@ -10,7 +10,7 @@ install:
   - SET PATH_ORIGINAL=%PATH%
   - SET "PATH_CYGWIN64=c:\cygwin64\bin"
   - SET PATH=%PATH_CYGWIN64%;%PATH_ORIGINAL%
-  - SET WORK_DIR=c:/projects
+  - SET WORK_DIR=c:\projects
   - SET WORK_DIR_IN_CYGWIN=/cygdrive/c/projects
   - SET CYGWIN64_DIR=/cygdrive/c/cygwin64
   - cd %WORK_DIR%
