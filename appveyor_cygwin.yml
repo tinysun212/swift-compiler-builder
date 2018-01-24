@@ -81,6 +81,13 @@ build_script:
   #  Get llvm-builder-cygwin artifact
   - wget -q https://ci.appveyor.com/api/projects/tinysun212/llvm-builder-tugj7/artifacts/swift_llvm_bin.tar.gz
   - tar zxf swift_llvm_bin.tar.gz
+  # Make the include path `/usr/lib/gcc/i686-pc-cygwin/4.7.3/inlcude/c++/i686-pc-cygwin` exist.
+  - CD c:/cygwin64/lib/gcc
+  - MKLINK /D i686-pc-cygwin x86_64-pc-cygwin
+  - CD i686-pc-cygwin
+  - MKLINK /D 4.7.3 6.4.0
+  - CD 4.7.3/include/c++
+  - MKLINK /D i686-pc-cygwin x86_64-pc-cygwin
   
   # Build swift
   - c:/cygwin64/bin/mkdir -p %WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/swift
