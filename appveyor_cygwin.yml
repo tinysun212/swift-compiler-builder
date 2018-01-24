@@ -24,9 +24,9 @@ install:
     -P python
     -P wget
     -P libiconv-devel
-    -P icu
+    -P libicu-devel
     -P libxml2
-    -P edit
+    -P libedit-devel
     -P python
     -P gcc
     -P g++
