@@ -67,7 +67,7 @@ install:
     
 build_script:
   # Build cmark
-  - MKDIR %WORK_DIR_IN_CYGWIN%\build\Ninja-ReleaseAssert\cmark-cygwin-x86_64
+  - MKDIR %WORK_DIR%\build\Ninja-ReleaseAssert\cmark-cygwin-x86_64
   - CD %WORK_DIR%/build/Ninja-ReleaseAssert/cmark-cygwin-x86_64
   - cmake -G Ninja -D CMAKE_BUILD_TYPE=RELEASE -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ %WORK_DIR_IN_CYGWIN%/cmark
   - ninja
@@ -76,7 +76,7 @@ build_script:
   - cp -p libcmark.a %WORK_DIR_IN_CYGWIN%/swift/libcmark.a
 
   # Load llvm/clang lib
-  - MKDIR %WORK_DIR_IN_CYGWIN%\build\Ninja-ReleaseAssert\llvm-cygwin-x86_64
+  - MKDIR %WORK_DIR%\build\Ninja-ReleaseAssert\llvm-cygwin-x86_64
   - CD %WORK_DIR%/build/Ninja-ReleaseAssert/llvm-cygwin-x86_64
   #  Get llvm-builder-cygwin artifact
   - wget -q https://ci.appveyor.com/api/projects/tinysun212/llvm-builder-tugj7/artifacts/swift_llvm_bin.tar.gz
