@@ -95,7 +95,7 @@ build_script:
   # cmark patch
   - MKDIR bin
   - cp -p %WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/cmark-cygwin-x86_64/src/cygcmark-0.22.0.dll bin
-  - cmake -G "Ninja" ../../../swift -DCMAKE_BUILD_TYPE=Release 
+  - cmake -G "Ninja" ../../../swift -DCMAKE_CXX_FLAGS="-mcmodel=large" -DCMAKE_BUILD_TYPE=Release 
     -DCMAKE_ASM_COMPILER=%WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/llvm-cygwin-x86_64/bin/clang.exe
     -DCMAKE_C_COMPILER=%WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/llvm-cygwin-x86_64/bin/clang.exe
     -DCMAKE_CXX_COMPILER=%WORK_DIR_IN_CYGWIN%/build/Ninja-ReleaseAssert/llvm-cygwin-x86_64/bin/clang++.exe
