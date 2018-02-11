@@ -41,7 +41,7 @@ install:
   # llvm source (need for cmake/modules/LLVM-Config.cmake at least)
   - wget -q -O llvm_src.tar.gz https://github.com/tinysun212/swift-llvm/archive/%GIT_TAG_OR_BRANCH%.tar.gz
   - tar zxf llvm_src.tar.gz
-  - mv swift-llvm-%GIT_TAG_OR_BRANCH% llvm
+  - MOVE swift-llvm-%GIT_TAG_OR_BRANCH% llvm
   # clang source (error at cmake/modules/SwiftSharedCMakeConfig.cmake:146)
   - wget -q -O clang_src.tar.gz https://github.com/tinysun212/swift-clang/archive/%GIT_TAG_OR_BRANCH%.tar.gz
   # Pre-extract the targets of the symbolic links
@@ -56,7 +56,7 @@ install:
       swift-clang-%GIT_TAG_OR_BRANCH%/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-as
       swift-clang-%GIT_TAG_OR_BRANCH%/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld
   - tar zxf clang_src.tar.gz
-  - mv swift-clang-%GIT_TAG_OR_BRANCH% clang
+  - MOVE swift-clang-%GIT_TAG_OR_BRANCH% clang
   # link clang into llvm
   - CD %WORK_DIR%/llvm/tools
   - MKLINK /d clang ..\..\clang
