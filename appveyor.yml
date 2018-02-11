@@ -13,6 +13,9 @@ install:
   - SET PATH=%PATH_MINGW64%;%PATH_ORIGINAL%
   - SET MINGW64_DIR=c:/msys64/mingw64
   - SET WORK_DIR=c:/projects
+  - SET GIT_TAG_OR_BRANCH=swift-4.0.3+mingw.20180212
+  - SET TAG_OR_BRANCH_IN_FOLDER=swift-4.0.3-mingw.20180212  
+  #- SET GIT_TAG_OR_BRANCH=swift-windows-4.0-branch  
   - cd %WORK_DIR%
   
   # Install packages
@@ -39,24 +42,24 @@ install:
   
   # Download source
   # llvm source
-  - wget -q -O llvm_src.tar.gz https://github.com/tinysun212/swift-llvm/archive/swift-4.0.3+mingw.20180102.tar.gz
+  - wget -q -O llvm_src.tar.gz https://github.com/tinysun212/swift-llvm/archive/%GIT_TAG_OR_BRANCH%.tar.gz
   - tar zxf llvm_src.tar.gz
-  - mv swift-llvm-swift-4.0.3-mingw.20180102 llvm
+  - MOVE swift-llvm-%TAG_OR_BRANCH_IN_FOLDER% llvm
   # clang source
-  - wget -q -O clang_src.tar.gz https://github.com/tinysun212/swift-clang/archive/swift-4.0.3+mingw.20180102.tar.gz
+  - wget -q -O clang_src.tar.gz https://github.com/tinysun212/swift-clang/archive/%GIT_TAG_OR_BRANCH%.tar.gz
   # Pre-extract the targets of the symbolic links
   # The Windows native symbolic link system cann't create a symbolic link to non-exist target.
   - tar zxf clang_src.tar.gz 
-      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/i386-unknown-linux-gnu-ld.gold
-      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld.gold
-      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/i386-unknown-linux-gnu/bin/ld.gold
-      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/basic_cross_linux_tree/usr/x86_64-unknown-linux-gnu/bin/ld.gold
-      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-as
-      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-ld
-      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-as
-      swift-clang-swift-4.0.3-mingw.20180102/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld
+      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/i386-unknown-linux-gnu-ld.gold
+      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld.gold
+      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/basic_cross_linux_tree/usr/i386-unknown-linux-gnu/bin/ld.gold
+      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/basic_cross_linux_tree/usr/x86_64-unknown-linux-gnu/bin/ld.gold
+      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-as
+      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-ld
+      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-as
+      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld
   - tar zxf clang_src.tar.gz
-  - mv swift-clang-swift-4.0.3-mingw.20180102 clang
+  - MOVE swift-clang-%TAG_OR_BRANCH_IN_FOLDER% clang
   # link clang into llvm
   - cd %WORK_DIR%/llvm/tools
   - mklink /d clang ..\..\clang
