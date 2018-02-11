@@ -114,7 +114,7 @@ build_script:
   # Build fake Glibc
   - CD %WORK_DIR%/build/Ninja-ReleaseAssert/swift-cygwin-x86_64/lib/swift/cygwin/x86_64
   - ECHO @_exported import Newlib > Glibc.swift
-  - env ../../../bin/swiftc -parse-as-library -emit-module Glibc.swift
+  - env ../../../../bin/swiftc -parse-as-library -emit-module Glibc.swift
   
 after_build:
   # Convert absolute path to relative path in newlib.modulemap
