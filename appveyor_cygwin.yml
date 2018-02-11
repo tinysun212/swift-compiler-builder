@@ -14,6 +14,7 @@ install:
   - SET WORK_DIR_IN_CYGWIN=/cygdrive/c/projects
   - SET CYGWIN64_DIR=/cygdrive/c/cygwin64
   - SET GIT_TAG_OR_BRANCH=swift-4.0.3+cygwin.20180212
+  - SET TAG_OR_BRANCH_IN_FOLDER=swift-4.0.3-cygwin.20180212
   #- SET GIT_TAG_OR_BRANCH=swift-windows-4.0-branch
   - CD %WORK_DIR%
   
@@ -41,22 +42,22 @@ install:
   # llvm source (need for cmake/modules/LLVM-Config.cmake at least)
   - wget -q -O llvm_src.tar.gz https://github.com/tinysun212/swift-llvm/archive/%GIT_TAG_OR_BRANCH%.tar.gz
   - tar zxf llvm_src.tar.gz
-  - MOVE swift-llvm-%GIT_TAG_OR_BRANCH% llvm
+  - MOVE swift-llvm-%TAG_OR_BRANCH_IN_FOLDER% llvm
   # clang source (error at cmake/modules/SwiftSharedCMakeConfig.cmake:146)
   - wget -q -O clang_src.tar.gz https://github.com/tinysun212/swift-clang/archive/%GIT_TAG_OR_BRANCH%.tar.gz
   # Pre-extract the targets of the symbolic links
   # The Windows native symbolic link system cann't create a symbolic link to non-exist target.
   - tar zxf clang_src.tar.gz 
-      swift-clang-%GIT_TAG_OR_BRANCH%/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/i386-unknown-linux-gnu-ld.gold
-      swift-clang-%GIT_TAG_OR_BRANCH%/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld.gold
-      swift-clang-%GIT_TAG_OR_BRANCH%/test/Driver/Inputs/basic_cross_linux_tree/usr/i386-unknown-linux-gnu/bin/ld.gold
-      swift-clang-%GIT_TAG_OR_BRANCH%/test/Driver/Inputs/basic_cross_linux_tree/usr/x86_64-unknown-linux-gnu/bin/ld.gold
-      swift-clang-%GIT_TAG_OR_BRANCH%/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-as
-      swift-clang-%GIT_TAG_OR_BRANCH%/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-ld
-      swift-clang-%GIT_TAG_OR_BRANCH%/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-as
-      swift-clang-%GIT_TAG_OR_BRANCH%/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld
+      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/i386-unknown-linux-gnu-ld.gold
+      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld.gold
+      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/basic_cross_linux_tree/usr/i386-unknown-linux-gnu/bin/ld.gold
+      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/basic_cross_linux_tree/usr/x86_64-unknown-linux-gnu/bin/ld.gold
+      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-as
+      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-ld
+      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-as
+      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld
   - tar zxf clang_src.tar.gz
-  - MOVE swift-clang-%GIT_TAG_OR_BRANCH% clang
+  - MOVE swift-clang-%TAG_OR_BRANCH_IN_FOLDER% clang
   # link clang into llvm
   - CD %WORK_DIR%/llvm/tools
   - MKLINK /d clang ..\..\clang
