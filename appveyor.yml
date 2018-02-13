@@ -13,10 +13,11 @@ install:
   - SET PATH=%PATH_MINGW64%;%PATH_ORIGINAL%
   - SET MINGW64_DIR=c:/msys64/mingw64
   - SET WORK_DIR=c:\projects
+  - SET WORK_DIR_SLASH=c:/projects
   - SET GIT_TAG_OR_BRANCH=swift-4.0.3+mingw.20180212
   - SET TAG_OR_BRANCH_IN_FOLDER=swift-4.0.3-mingw.20180212  
   #- SET GIT_TAG_OR_BRANCH=swift-windows-4.0-branch  
-  - cd %WORK_DIR%
+  - CD %WORK_DIR%
   
   # Install packages
   - pacman -S --noconfirm mingw-w64-x86_64-cmake
@@ -61,14 +62,14 @@ install:
   - tar zxf clang_src.tar.gz
   - MOVE swift-clang-%TAG_OR_BRANCH_IN_FOLDER% clang
   # link clang into llvm
-  - cd %WORK_DIR%/llvm/tools
+  - CD %WORK_DIR%/llvm/tools
   - MKLINK /d clang ..\..\clang
   # cmark source
   - git clone https://github.com/apple/swift-cmark.git %WORK_DIR%/cmark
-  - cd %WORK_DIR%/cmark & git checkout -qf master & cd ..
+  - CD %WORK_DIR%/cmark & git checkout -qf master & cd ..
   # swift source
   - git clone https://github.com/tinysun212/swift-windows.git %WORK_DIR%/swift
-  - cd %WORK_DIR%/swift & git checkout -qf %GIT_TAG_OR_BRANCH% & cd ..
+  - CD %WORK_DIR%/swift & git checkout -qf %GIT_TAG_OR_BRANCH% & cd ..
     
 build_script:
   # Build cmark
@@ -93,8 +94,8 @@ build_script:
   - MKDIR %WORK_DIR%\build\NinjaMinGW\swift
   - CD %WORK_DIR%/build/NinjaMinGW/swift
   # cmark patch
-  - MKDIR bin & cp -p %WORK_DIR%/build/NinjaMinGW/cmark/src/libcmark.dll bin
-  - cmake -G "Ninja" ../../../swift -DCMAKE_BUILD_TYPE=Release -DCMAKE_ASM_COMPILER=%WORK_DIR%/build/NinjaMinGW/llvm/bin/clang.exe -DCMAKE_C_COMPILER=%WORK_DIR%/build/NinjaMinGW/llvm/bin/clang.exe  -DCMAKE_CXX_COMPILER=%WORK_DIR%/build/NinjaMinGW/llvm/bin/clang++.exe -DPKG_CONFIG_EXECUTABLE=%MINGW64_DIR%/bin/pkg-config -DICU_UC_INCLUDE_DIR=%MINGW64_DIR%include -DICU_UC_LIBRARY=%MINGW64_DIR%/lib/libicuuc.dll.a -DICU_I18N_INCLUDE_DIR=%MINGW64_DIR%/include -DICU_I18N_LIBRARY=%MINGW64_DIR%/lib/libicuin.dll.a -DSWIFT_INCLUDE_DOCS=FALSE -DSWIFT_PATH_TO_CMARK_BUILD=%WORK_DIR%/build/NinjaMinGW/cmark -DSWIFT_PATH_TO_CMARK_SOURCE=%WORK_DIR%/cmark -DSWIFT_PATH_TO_LLVM_SOURCE=%WORK_DIR%/llvm -DSWIFT_PATH_TO_LLVM_BUILD=%WORK_DIR%/build/NinjaMinGW/llvm -DSWIFT_STDLIB_ASSERTIONS:BOOL=TRUE %WORK_DIR%/swift
+  - MKDIR bin & cp -p %WORK_DIR_SLASH%/build/NinjaMinGW/cmark/src/libcmark.dll bin
+  - cmake -G "Ninja" ../../../swift -DCMAKE_BUILD_TYPE=Release -DCMAKE_ASM_COMPILER=%WORK_DIR_SLASH%/build/NinjaMinGW/llvm/bin/clang.exe -DCMAKE_C_COMPILER=%WORK_DIR_SLASH%/build/NinjaMinGW/llvm/bin/clang.exe  -DCMAKE_CXX_COMPILER=%WORK_DIR_SLASH%/build/NinjaMinGW/llvm/bin/clang++.exe -DPKG_CONFIG_EXECUTABLE=%MINGW64_DIR%/bin/pkg-config -DICU_UC_INCLUDE_DIR=%MINGW64_DIR%include -DICU_UC_LIBRARY=%MINGW64_DIR%/lib/libicuuc.dll.a -DICU_I18N_INCLUDE_DIR=%MINGW64_DIR%/include -DICU_I18N_LIBRARY=%MINGW64_DIR%/lib/libicuin.dll.a -DSWIFT_INCLUDE_DOCS=FALSE -DSWIFT_PATH_TO_CMARK_BUILD=%WORK_DIR%/build/NinjaMinGW/cmark -DSWIFT_PATH_TO_CMARK_SOURCE=%WORK_DIR%/cmark -DSWIFT_PATH_TO_LLVM_SOURCE=%WORK_DIR%/llvm -DSWIFT_PATH_TO_LLVM_BUILD=%WORK_DIR%/build/NinjaMinGW/llvm -DSWIFT_STDLIB_ASSERTIONS:BOOL=TRUE %WORK_DIR%/swift
   - ninja
 
   # Move *.dll.a from mingw/x86_64 to mingw
@@ -106,7 +107,7 @@ after_build:
   - CD %WORK_DIR%/build/NinjaMinGW/swift/lib/swift/mingw/x86_64
   - sed -i -e 's;c:/msys64;../../../../..;' mingw_crt.modulemap
   # Archiving to swift.zip
-  - cd %WORK_DIR%/build/NinjaMinGW
+  - CD %WORK_DIR%/build/NinjaMinGW
   - mv swift usr
   - 7z a swift.zip usr/bin/swift.exe usr/bin/*.dll usr/lib/swift
   - mv swift.zip %APPVEYOR_BUILD_FOLDER%
