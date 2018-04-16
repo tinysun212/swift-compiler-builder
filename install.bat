@@ -1,7 +1,7 @@
 rem install
 
 IF "%PLATFORM%" == "mingw64" (
-  CALL install_mingw.bat
+  CALL %APPVEYOR_BUILD_FOLDER%\install_mingw.bat
 ) else (
-  CALL install_cygwin.bat
+  CALL %APPVEYOR_BUILD_FOLDER%\install_cygwin.bat
 )
