@@ -1,7 +1,7 @@
 rem build_script
 
 IF "%PLATFORM%" == "mingw64" (
-  CALL build_script_mingw.bat
+  CALL %APPVEYOR_BUILD_FOLDER%\build_script_mingw.bat
 ) else (
-  CALL build_script_cygwin.bat
+  CALL %APPVEYOR_BUILD_FOLDER%\build_script_cygwin.bat
 )
