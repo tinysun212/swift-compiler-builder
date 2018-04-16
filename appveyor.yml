@@ -6,13 +6,13 @@ environment:
     PLATFORM: mingw64
 
 install:
-  - call install_mingw.bat
+  - call %APPVEYOR_BUILD_FOLDER%\install_mingw.bat
   
 build_script:
-  - call build_script_mingw.bat
+  - call %APPVEYOR_BUILD_FOLDER%\build_script_mingw.bat
 
 after_build:
-  - call after_build_mingw.bat
+  - call %APPVEYOR_BUILD_FOLDER%\after_build_mingw.bat
 
 test_script:
   - 'echo skip test'
