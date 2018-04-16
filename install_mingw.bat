@@ -38,19 +38,10 @@ MOVE swift-llvm-%TAG_OR_BRANCH_IN_FOLDER% llvm
 
 rem clang source
 wget -q -O clang_src.tar.gz https://github.com/tinysun212/swift-clang/archive/%GIT_TAG_OR_BRANCH%.tar.gz
-
-rem Pre-extract the targets of the symbolic links
 rem The Windows native symbolic link system cann't create a symbolic link to non-exist target.
-tar zxf clang_src.tar.gz ^
-      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/i386-unknown-linux-gnu-ld.gold   ^
-      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/basic_cross_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld.gold ^
-      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/basic_cross_linux_tree/usr/i386-unknown-linux-gnu/bin/ld.gold   ^
-      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/basic_cross_linux_tree/usr/x86_64-unknown-linux-gnu/bin/ld.gold ^
-      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-as     ^
-      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/multilib_32bit_linux_tree/usr/bin/i386-unknown-linux-gnu-ld     ^
-      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-as   ^
-      swift-clang-%TAG_OR_BRANCH_IN_FOLDER%/test/Driver/Inputs/multilib_64bit_linux_tree/usr/bin/x86_64-unknown-linux-gnu-ld
-tar zxf clang_src.tar.gz
+rem 7z solved this problem by creating empty file.
+7z x clang_src.tar.gz -so | 7z x -si -ttar -bd -bso0
+MOVE pax_global_header clang_commit_id
 MOVE swift-clang-%TAG_OR_BRANCH_IN_FOLDER% clang
 
 rem link clang into llvm
