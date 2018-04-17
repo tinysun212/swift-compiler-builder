@@ -23,7 +23,7 @@ pacman -S --noconfirm mingw-w64-x86_64-winpthreads
 pacman -S --noconfirm mingw-w64-x86_64-pkg-config  
 pacman -S --noconfirm mingw-w64-x86_64-dlfcn
 pacman -S --noconfirm python                       
-pacman -S --noconfirm python2                      
+pacman -S --noconfirm mingw-w64-x86_64-python2
   
 rem Patch GCC header
 rem __float128 is undefined in clang (https://github.com/Alexpux/MINGW-packages/pull/1833)
