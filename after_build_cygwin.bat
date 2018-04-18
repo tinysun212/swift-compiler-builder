@@ -13,4 +13,4 @@ rem Archiving to swift.zip
 CD %WORK_DIR%/build/Ninja-ReleaseAssert
 mv swift-cygwin-x86_64 usr
 7z a swift.zip usr/bin/swift.exe usr/bin/*.dll usr/lib/swift
-mv swift.zip %APPVEYOR_BUILD_FOLDER%
+mv swift.zip %APPVEYOR_BUILD_FOLDER%\swift-cygwin.zip
