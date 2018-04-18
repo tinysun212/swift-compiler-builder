@@ -7,4 +7,4 @@ rem Archiving to swift.zip
 CD %WORK_DIR%/build/NinjaMinGW
 mv swift usr
 7z a swift.zip usr/bin/swift.exe usr/bin/swift-demangle.exe usr/bin/*.dll usr/lib/swift
-mv swift.zip %APPVEYOR_BUILD_FOLDER%\swift-mingw.zip
+mv swift.zip %APPVEYOR_BUILD_FOLDER%
