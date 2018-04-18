@@ -2,10 +2,8 @@ version: 1.0.{build}
 
 environment:
   matrix:
-  - COMPILER: gcc
-    PLATFORM: mingw64
-  - COMPILER: gcc
-    PLATFORM: cygwin64    
+  - PLATFORM: mingw64
+  - PLATFORM: cygwin64    
 
 install:
   - call %APPVEYOR_BUILD_FOLDER%\install.bat
