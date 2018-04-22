@@ -2,17 +2,17 @@ version: 1.0.{build}
 
 environment:
   matrix:
-  - PLATFORM: mingw64
-  - PLATFORM: cygwin64    
+  - BUILD_TARGET: mingw64
+  - BUILD_TARGET: cygwin64    
 
 install:
-  - call %APPVEYOR_BUILD_FOLDER%\install.bat
+  - call %APPVEYOR_BUILD_FOLDER%\install_%BUILD_TARGET%.bat
   
 build_script:
-  - call %APPVEYOR_BUILD_FOLDER%\build_script.bat
+  - call %APPVEYOR_BUILD_FOLDER%\build_script_%BUILD_TARGET%.bat
 
 after_build:
-  - call %APPVEYOR_BUILD_FOLDER%\after_build.bat
+  - call %APPVEYOR_BUILD_FOLDER%\after_build_%BUILD_TARGET%.bat
 
 test_script:
   - 'echo skip test'
