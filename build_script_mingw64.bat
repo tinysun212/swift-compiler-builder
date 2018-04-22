@@ -15,7 +15,8 @@ rem clang source (error at cmake/modules/SwiftSharedCMakeConfig.cmake:146)
 rem Load llvm/clang lib
 c:/msys64/usr/bin/mkdir -p %WORK_DIR%/build/NinjaMinGW/llvm
 CD %WORK_DIR%/build/NinjaMinGW/llvm
-wget -q https://ci.appveyor.com/api/projects/tinysun212/llvm-builder/artifacts/swift_llvm_bin.tar.gz
+SET JOB_NAME=Environment: BUILD_TARGET=mingw64
+wget -q https://ci.appveyor.com/api/projects/tinysun212/llvm-builder/artifacts/swift_llvm_bin.tar.gz?job="%JOB_NAME%"
 tar zxf swift_llvm_bin.tar.gz
   
 rem Build swift
