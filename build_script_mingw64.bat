@@ -16,7 +16,7 @@ rem Load llvm/clang lib
 c:/msys64/usr/bin/mkdir -p %WORK_DIR%/build/NinjaMinGW/llvm
 CD %WORK_DIR%/build/NinjaMinGW/llvm
 SET JOB_NAME=Environment: BUILD_TARGET=mingw64
-wget -q https://ci.appveyor.com/api/projects/tinysun212/llvm-builder/artifacts/swift_llvm_bin.tar.gz?job="%JOB_NAME%"
+wget -q -O swift_llvm_bin.tar.gz https://ci.appveyor.com/api/projects/tinysun212/llvm-builder/artifacts/swift_llvm_bin.tar.gz?job="%JOB_NAME%"
 tar zxf swift_llvm_bin.tar.gz
   
 rem Build swift
