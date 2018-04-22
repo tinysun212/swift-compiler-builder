@@ -15,7 +15,7 @@ CD %WORK_DIR%/build/Ninja-ReleaseAssert/llvm-cygwin-x86_64
 
 rem Get llvm-builder-cygwin artifact
 SET JOB_NAME=Environment: BUILD_TARGET=cygwin64
-wget -q https://ci.appveyor.com/api/projects/tinysun212/llvm-builder-tugj7/artifacts/swift_llvm_bin.tar.gz?job="%JOB_NAME%"
+wget -q -O swift_llvm_bin.tar.gz https://ci.appveyor.com/api/projects/tinysun212/llvm-builder-tugj7/artifacts/swift_llvm_bin.tar.gz?job="%JOB_NAME%"
 tar zxf swift_llvm_bin.tar.gz
 
 rem Make the include path `/usr/lib/gcc/i686-pc-cygwin/4.7.3/inlcude/c++/i686-pc-cygwin` exist.
