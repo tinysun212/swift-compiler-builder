@@ -3,7 +3,7 @@ version: 1.0.{build}
 environment:
   matrix:
   - BUILD_TARGET: mingw64
-  - BUILD_TARGET: cygwin64    
+#  - BUILD_TARGET: cygwin64    
 
 install:
   - call %APPVEYOR_BUILD_FOLDER%\install_%BUILD_TARGET%.bat
